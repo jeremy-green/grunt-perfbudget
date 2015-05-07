@@ -164,11 +164,16 @@ module.exports = function(grunt) {
             }
 
             grunt.log.error(status);
+
+            //still run other tasks
+            done(err);
           } else if (data.response.statusCode === 200) {
             testId = data.response.data.testId;
 
             if (data.response.data.successfulFVRuns <= 0) {
               grunt.log.error( ('Test ' + testId + ' was unable to complete. Please see ' + data.response.data.summary + ' for more details.').cyan );
+
+              done();
             } else {
               // yay! now try to get the actual results
               retrieveResults(data.response);
@@ -177,6 +182,7 @@ module.exports = function(grunt) {
           } else {
             // ruh roh! Something is off here.
             grunt.log.error(data.response.data.statusText);
+            done();
           }
         });
   });
